@@ -19,7 +19,11 @@ class TestUrbanRoutes:
         cls.driver.get(data.urban_routes_url)
         cls.routes_page = methods.UrbanRoutesPage(cls.driver)
 
-#1
+    def teardown_method(self, method):
+        self.driver.delete_all_cookies()  # Esto limpiará cookies y sesión
+        self.driver.refresh()  # Refrescará la página para empezar desde cero
+
+    #1
     def test_routes_page(self):
         self.routes_page.set_from(data.address_from)
         self.routes_page.set_to(data.address_to)
