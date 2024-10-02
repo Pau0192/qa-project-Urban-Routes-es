@@ -3,7 +3,6 @@ from selenium import webdriver
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
 import methods
 
 
@@ -120,13 +119,9 @@ class TestUrbanRoutes:
                                                    comfort_button).get_attribute("class")
         assert comfort_tariff[4].is_enabled()
         self.routes_page.click_abrir_seccion()
-        element = methods.driver.find_element(By.XPATH, '//*[contains(text(), "Helado")]')
-        methods.driver.execute_script("arguments[0].scrollIntoView();", element)
-        self.routes_page.click_agregar_helado_button()
-        self.routes_page.click_agregar_helado_button()
-        icecream_counter = self.driver.find_element(*methods.UrbanRoutesPage.icecream_counter)
-        icecream_count = int(icecream_counter.text)
-        assert icecream_count == 2
+        routes_page = methods.UrbanRoutesPage(self.driver)
+        routes_page.double_click_counter_plus_disabled(2)
+        assert routes_page.get_agregar_helado_buttton() == 2
 
 #8
     def test_aparece_pedir_taxi(self):

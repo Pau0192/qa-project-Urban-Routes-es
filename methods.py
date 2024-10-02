@@ -8,6 +8,10 @@ from selenium.webdriver.support import expected_conditions
 
 driver = webdriver.Chrome()
 driver.get(data.urban_routes_url)
+options = webdriver.ChromeOptions()
+options.add_argument("--disable-infobars")
+options.add_argument("--start-maximized")
+driver = webdriver.Chrome(options=options)
 
 # no modificar
 def retrieve_phone_code(driver) -> str:
@@ -57,8 +61,8 @@ class UrbanRoutesPage:
     mensaje_conductor_button = (By.ID, 'comment')
     abrir_seccion = (By.CLASS_NAME, 'reqs-arrow')
     agregar_manta_slide = (By.CLASS_NAME, "switch")
-    agregar_helado_button = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[4]/div[2]/div[3]/div/div[2]/div[1]/div/div[2]/div/div[3] > div.r-group-items > div:nth-child(1) > div > div.r-counter > div > div.counter-plus')
-    icecream_counter = (By.CLASS_NAME, "counter-value")
+    counter_plus_disabled = (By.XPATH, "(//div[@class='r-counter']//div[@class='counter']//div[@class='counter-plus' and text()='+'])[1]")
+    counter_value = (By.CLASS_NAME, "counter-value")
     order_a_taxi = (By.CLASS_NAME, "smart-button-wrapper")
     modal_opcional = (By.XPATH, '//*[contains(text(), "El conductor llegará en")]')
     switch_checkbox = (By.CLASS_NAME, "switch-input")
@@ -66,6 +70,7 @@ class UrbanRoutesPage:
 
     def __init__(self, driver):
         self.driver = driver
+        self.wait = WebDriverWait(self.driver,45)
 
     def set_from(self, from_address):
         self.driver.find_element(*self.from_field).send_keys(data.address_from)
@@ -99,7 +104,6 @@ class UrbanRoutesPage:
 
     def click_confirmar_button(self, code):
         self.driver.find_element(*self.confirmar_button).click()
-        print(f"Confirmando con código: {code}")
 
     def click_pago_button(self):
         self.driver.find_element(*self.pago_button).click()
@@ -144,8 +148,17 @@ class UrbanRoutesPage:
     def click_agregar_manta_slide(self):
         self.driver.find_element(*self.agregar_manta_slide).click()
 
-    def click_agregar_helado_button(self):
-        self.driver.find_element(*self.agregar_helado_button).click()
+    def double_click_counter_plus_disabled(self, clicks=2):  # Agrega un parámetro por defecto
+        WebDriverWait(self.driver, 4).until(
+        expected_conditions.element_to_be_clickable(self.counter_plus_disabled)
+        )
+        for _ in range(clicks):
+            self.driver.find_element(*self.counter_plus_disabled).click()
+
+    def get_agregar_helado_buttton(self):
+        value_element = self.wait.until(expected_conditions.visibility_of_element_located(self.counter_value))
+        value = value_element.text.strip()
+        return int(value) if value else 0
 
     def wait_opcional_modal(self):
         self.driver.find_element(*self.modal_opcional)
