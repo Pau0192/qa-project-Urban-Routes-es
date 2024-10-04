@@ -34,10 +34,10 @@ class TestUrbanRoutes:
         self.routes_page.set_from(data.address_from)
         self.routes_page.set_to(data.address_to)
         self.routes_page.click_pedir_un_taxi_button()
-        self.routes_page.click_comfort_button()
-        comfort_tariff = self.driver.find_elements(*self.routes_page.comfort_button)
+        self.routes_page.click_comfort_tariff_button()
+        comfort_tariff = self.driver.find_elements(*self.routes_page.comfort_tariff_button)
         assert "tcard" in self.driver.find_element(*methods.UrbanRoutesPage.
-                                                   comfort_button).get_attribute("class")
+                                                   comfort_tariff_button).get_attribute("class")
         assert comfort_tariff[4].is_enabled()
 
 #3
@@ -45,7 +45,7 @@ class TestUrbanRoutes:
         self.routes_page.set_from(data.address_from)
         self.routes_page.set_to(data.address_to)
         self.routes_page.click_pedir_un_taxi_button()
-        self.routes_page.click_comfort_button()
+        self.routes_page.click_comfort_tariff_button()
         self.routes_page.click_telefono_field()
         self.routes_page.set_phone_number()
         self.routes_page.click_next_button()
@@ -59,7 +59,7 @@ class TestUrbanRoutes:
         self.routes_page.set_from(data.address_from)
         self.routes_page.set_to(data.address_to)
         self.routes_page.click_pedir_un_taxi_button()
-        self.routes_page.click_comfort_button()
+        self.routes_page.click_comfort_tariff_button()
         self.routes_page.click_telefono_field()
         self.routes_page.set_phone_number()
         self.routes_page.click_next_button()
@@ -97,11 +97,7 @@ class TestUrbanRoutes:
        self.routes_page.set_from(data.address_from)
        self.routes_page.set_to(data.address_to)
        self.routes_page.click_pedir_un_taxi_button()
-       self.routes_page.click_comfort_button()
-       comfort_tariff = self.driver.find_elements(*self.routes_page.comfort_button)
-       assert "tcard" in self.driver.find_element(*methods.UrbanRoutesPage.
-                                                  comfort_button).get_attribute("class")
-       assert comfort_tariff[4].is_enabled()
+       self.routes_page.click_comfort_tariff_button()
        self.routes_page.click_abrir_seccion()
        self.routes_page.click_agregar_manta_slide()
        checkbox = self.driver.find_element(*methods.UrbanRoutesPage.switch_checkbox)
@@ -113,11 +109,7 @@ class TestUrbanRoutes:
         self.routes_page.set_from(data.address_from)
         self.routes_page.set_to(data.address_to)
         self.routes_page.click_pedir_un_taxi_button()
-        self.routes_page.click_comfort_button()
-        comfort_tariff = self.driver.find_elements(*self.routes_page.comfort_button)
-        assert "tcard" in self.driver.find_element(*methods.UrbanRoutesPage.
-                                                   comfort_button).get_attribute("class")
-        assert comfort_tariff[4].is_enabled()
+        self.routes_page.click_comfort_tariff_button()
         self.routes_page.click_abrir_seccion()
         self.routes_page.click_open_helado()
         routes_page = methods.UrbanRoutesPage(self.driver)
@@ -156,7 +148,7 @@ class TestUrbanRoutes:
         self.routes_page.click_abrir_seccion()
         self.routes_page.click_agregar_manta_slide()
         self.routes_page.click_order_a_taxi()
-        WebDriverWait(self.driver, 40).until(
+        WebDriverWait(self.driver, 4).until(
             expected_conditions.visibility_of_element_located(self.routes_page.modal_opcional)
         )
         assert self.driver.find_element(*self.routes_page.modal_opcional).is_displayed()

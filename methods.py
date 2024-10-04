@@ -1,3 +1,5 @@
+from itertools import filterfalse
+
 import data
 from selenium import webdriver
 from selenium.webdriver import Keys
@@ -45,7 +47,8 @@ class UrbanRoutesPage:
     from_field = (By.ID, 'from')
     to_field = (By.ID, 'to')
     pedir_un_taxi_button = (By.XPATH, '//*[contains(text(), "Pedir un taxi")]')
-    comfort_button = (By.CSS_SELECTOR, "button.i-button.tcard-i.active")
+    comfort_tariff_button = (By.CSS_SELECTOR, "button.i-button.tcard-i.active")
+    comfort_button = (By.XPATH, "//div[contains(@class, 'tcard active')]//button[@data-for='tariff-card-4' and @class='i-button tcard-i active']")
     telefono_field = (By.CLASS_NAME, 'np-button')
     phone_input = (By.ID, 'phone')
     next_button = (By.XPATH, '//*[contains(text(), "Siguiente")]')
@@ -60,7 +63,7 @@ class UrbanRoutesPage:
     card_close_button = (By.CSS_SELECTOR, '.payment-picker.open .modal .section.active .close-button')
     mensaje_conductor_button = (By.ID, 'comment')
     abrir_seccion = (By.CLASS_NAME, 'reqs-arrow')
-    agregar_manta_slide = (By.CLASS_NAME, "switch")
+    agregar_manta_slide = (By.XPATH, "//div[contains(text(), 'Manta y pañuelos')]/ancestor::div[contains(@class, 'r-sw-container')]//span[@class='slider round']")
     open_helado = (By.CLASS_NAME, 'r-right-img')
     counter_plus_disabled = (By.XPATH, "(//div[@class='counter-plus'])[1]")
     counter_value = (By.CLASS_NAME, "counter-value")
@@ -90,6 +93,9 @@ class UrbanRoutesPage:
 
     def click_comfort_button(self):
         self.driver.find_element(*self.comfort_button).click()
+
+    def click_comfort_tariff_button(self):
+        self.driver.find_element(*self.comfort_tariff_button).click()
 
     def click_telefono_field(self):
         self.driver.find_element(*self.telefono_field).click()
