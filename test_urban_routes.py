@@ -119,6 +119,7 @@ class TestUrbanRoutes:
                                                    comfort_button).get_attribute("class")
         assert comfort_tariff[4].is_enabled()
         self.routes_page.click_abrir_seccion()
+        self.routes_page.click_open_helado()
         routes_page = methods.UrbanRoutesPage(self.driver)
         routes_page.double_click_counter_plus_disabled(2)
         assert routes_page.get_agregar_helado_buttton() == 2
