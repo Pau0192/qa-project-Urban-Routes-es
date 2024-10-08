@@ -1,19 +1,11 @@
-from itertools import filterfalse
-
 import data
-from selenium import webdriver
 from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions
-
-
-driver = webdriver.Chrome()
-driver.get(data.urban_routes_url)
-options = webdriver.ChromeOptions()
-options.add_argument("--disable-infobars")
-options.add_argument("--start-maximized")
-driver = webdriver.Chrome(options=options)
+import json
+import time
+from selenium.common import WebDriverException
 
 # no modificar
 def retrieve_phone_code(driver) -> str:
@@ -21,9 +13,6 @@ def retrieve_phone_code(driver) -> str:
     Utilízalo cuando la aplicación espere el código de confirmación para pasarlo a tus pruebas.
     El código de confirmación del teléfono solo se puede obtener después de haberlo solicitado en la aplicación."""
 
-    import json
-    import time
-    from selenium.common import WebDriverException
     code = None
     for i in range(10):
         try:
@@ -47,8 +36,8 @@ class UrbanRoutesPage:
     from_field = (By.ID, 'from')
     to_field = (By.ID, 'to')
     pedir_un_taxi_button = (By.XPATH, '//*[contains(text(), "Pedir un taxi")]')
-    comfort_tariff_button = (By.CSS_SELECTOR, "button.i-button.tcard-i.active")
-    comfort_button = (By.XPATH, "//div[contains(@class, 'tcard active')]//button[@data-for='tariff-card-4' and @class='i-button tcard-i active']")
+    comfort_tariff_button = (By.XPATH, "*//div[contains(@class, ' tcard active') and .//dic[text()='Comfort']*)")
+    comfort_button = (By.XPATH, "//div[@class='tcard-title' and normalize-space()='Comfort']")
     telefono_field = (By.CLASS_NAME, 'np-button')
     phone_input = (By.ID, 'phone')
     next_button = (By.XPATH, '//*[contains(text(), "Siguiente")]')
@@ -62,9 +51,8 @@ class UrbanRoutesPage:
     agregar_field = (By.XPATH, "//button[@type='submit' and text()='Agregar']")
     card_close_button = (By.CSS_SELECTOR, '.payment-picker.open .modal .section.active .close-button')
     mensaje_conductor_button = (By.ID, 'comment')
-    abrir_seccion = (By.CLASS_NAME, 'reqs-arrow')
-    agregar_manta_slide = (By.XPATH, "//div[contains(text(), 'Manta y pañuelos')]/ancestor::div[contains(@class, 'r-sw-container')]//span[@class='slider round']")
-    open_helado = (By.CLASS_NAME, 'r-right-img')
+    agregar_manta_slide = (By.XPATH, "//div[@class='r-sw-label' and text()='Manta y pañuelos']/following-sibling::div[contains(@class, 'r-sw')]//span[@class='slider round']")
+    open_helado = (By.XPATH, "//div[@class='r-counter-label' and text()='Helado']/following-sibling::div//div[@class='counter-plus']")
     counter_plus_disabled = (By.XPATH, "(//div[@class='counter-plus'])[1]")
     counter_value = (By.CLASS_NAME, "counter-value")
     order_a_taxi = (By.CLASS_NAME, "smart-button-wrapper")
@@ -92,10 +80,15 @@ class UrbanRoutesPage:
         self.driver.find_element(*self.pedir_un_taxi_button).click()
 
     def click_comfort_button(self):
-        self.driver.find_element(*self.comfort_button).click()
+        comfort_tariff_button = WebDriverWait(self.driver, 4).until(expected_conditions.element_to_be_clickable(self.comfort_button))
+        comfort_tariff_button.click()
 
-    def click_comfort_tariff_button(self):
-        self.driver.find_element(*self.comfort_tariff_button).click()
+    def is_comfort_tariff_selected(self):
+        try:
+            self.driver.find_element(*self.comfort_button)
+            return True
+        except:
+            return False
 
     def click_telefono_field(self):
         self.driver.find_element(*self.telefono_field).click()
@@ -148,9 +141,6 @@ class UrbanRoutesPage:
 
     def set_mensaje_buttton(self):
         self.driver.find_element(*self.mensaje_conductor_button).send_keys(data.message_for_driver)
-
-    def click_abrir_seccion(self):
-        self.driver.find_element(*self.abrir_seccion).click()
 
     def click_agregar_manta_slide(self):
         self.driver.find_element(*self.agregar_manta_slide).click()
